@@ -1,7 +1,6 @@
 <template>
     <div>
         <div></div>
-        <v-btn color="success" @click="createNewQueue('No Test')">text</v-btn>
         <v-row class="d-flex ma-3" justify="start" align="start">
             <div class="pa-2" width="300px">
                 <Queue queue-target="reservation" :loaded="reservationLoaded"></Queue>
@@ -26,15 +25,6 @@ export default {
         reservationLoaded: false
     }),
     methods: {
-        createNewQueue (name) {
-            this.$http.post('/api/queue/new', { name: name })
-                .catch(err => {
-                    if (err.response) {
-                        console.log(err.response.message)
-                    }
-                    this.setSnack('An error occured, could not create queue')
-                })
-        },
         ...mapMutations({
             setSnack: 'setSnack'
         }),

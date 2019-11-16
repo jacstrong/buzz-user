@@ -106,7 +106,7 @@
                 </v-card-text>
                 <v-card-actions>
                     <v-spacer></v-spacer>
-                    <v-btn color="warning" text @click="dialog = false">delete</v-btn>
+                    <v-btn color="warning" text @click="dialog = false">Cancel</v-btn>
                     <v-btn color="blue darken-1" text :disabled="!valid" @click="save">Save</v-btn>
                 </v-card-actions>
             </v-card>
@@ -144,15 +144,27 @@ export default {
         save () {
             let data = {
                 name: this.name,
-                phoneNumber: this.phoneNumber
+                phoneNumber: this.phoneNumber,
+                partyNum: this.partyNum,
+                date: this.date,
+                time: this.time,
+                state: 'waiting'
             }
-            this.$http.post('/api/contact', data)
+
+            this.$http.post('/api/reservations', data)
                 .then(response => {
                     console.log(response)
 
+                    this.setReservation(response.data)
+                    this.dialog = false
+
                 })
                 .catch()
-        }
+        },
+        ...mapMutations({
+            addToReservation: 'addToReservation',
+            setReservation: 'setReservation'
+        })
     }
 }
 
