@@ -65,6 +65,9 @@ export default new Vuex.Store({
       contact.timeStamp = new Date()
       state.walkin.queue.push(contact)
     },
+    addToReservation (state, contact) {
+      state.reservation.queue.push(contact)
+    },
     changeWalkinStateToNotified(state, index) {
       state.walkin.queue[index].state = "Notified"
       state.walkin.queue[index].timeStamp = new Date()
@@ -89,6 +92,10 @@ export default new Vuex.Store({
     walkinQueueID: (state) => (index) => {
       console.log(index)
       return state.walkin.queue[index].contactID
+    },
+    reservationQueueID: (state) => (index) => {
+      console.log(index)
+      return state.reservation.queue[index].contactID
     }
   },
   actions: {
