@@ -15,13 +15,10 @@ export default new Vuex.Store({
       token: '',
       id: ''
     },
-    cart: [],
     isLoggedIn: false,
     authChecked: false,
-    storeID: '',
-    storeName: '',
-    storeDescription: '',
-    storeCustomerName: ''
+    reservation: {},
+    walkin: {}
   },
   mutations: {
     setAuth (state, auth) {
@@ -35,17 +32,8 @@ export default new Vuex.Store({
       cookie.set('firstName', auth.firstName)
       state.isLoggedIn = true;
     },
-    setCart (state, cart) {
-      state.cart = cart
-    },
     setSnack (state, snack) {
       state.snack = snack;
-    },
-    setStoreData (state, storeID, storeName, storeDescription, storeCustomerName) {
-      state.storeID = storeID
-      state.storeName = storeName
-      state.storeDescription = storeDescription
-      state.storeCustomerName = storeCustomerName
     },
     clearAuth (state) {
       state.auth = {
@@ -67,11 +55,26 @@ export default new Vuex.Store({
       state.auth.id = cookie.get('id');
       state.isLoggedIn = true;
     },
+    setReservation (state, queues) {
+      state.reservation = queues
+    },
+    setWalkin (state, queues) {
+      state.walkin = queues
+    }
   },
   getters: {
     isLoggedIn: (state) => {
       return state.isLoggedIn;
     },
+    queues: (state) => {
+      return state.queues
+    },
+    reservation: (state) => {
+      return state.reservation
+    },
+    walkin: (state) => {
+      return state.walkin
+    }
   },
   actions: {
     checkCurrentUser: (context, callback) => {
@@ -83,7 +86,36 @@ export default new Vuex.Store({
         .catch(err => {
           console.log(err)
         });
+    },
+    getReservation: (context, callback) => {
+      Vue.prototype.$http.get('/api/queue/reservation')
+        .then(response => {
+          context.commit('setReservation', response.data)
+          if (callback) callback()
+        })
+        .catch(err => {
+          if (err.response) {
+            console.log(err.response)
+          }
+          // context.mutations.setSnack('Unable to get queues')
+          context.snack = 'Could not get data'
+        }) 
+    },
+    getWalkin: (context, callback) => {
+      Vue.prototype.$http.get('/api/queue/walkin')
+        .then(response => {
+          context.commit('setWalkin', response.data)
+          if (callback) callback()
+        })
+        .catch(err => {
+          if (err.response) {
+            console.log(err.response)
+          }
+          // context.mutations.setSnack('Unable to get queues')
+          context.snack = 'Could not get data'
+        }) 
     }
 
-  }
+  },
+  
 })
