@@ -195,8 +195,8 @@ export default {
         icon: mdiViewDashboard
       },
       {
-        name: 'Manage Users',
-        link: { name: 'ManageUsers' },
+        name: 'Marketing',
+        link: { name: 'Marketing' },
         icon: mdiAccountSupervisorCircle
       },
       {

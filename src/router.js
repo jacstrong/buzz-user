@@ -13,6 +13,9 @@ export default new Router({
       children: [
         {
           path: '/', name: 'Queues', component: () => import(/* webpackChunkName: "StoreLanding" */ './views/user/Queues.vue')
+        },
+        {
+          path: '/marketing', name: 'Marketing', component: () => import(/* webpackChunkName: "StoreLanding" */ './views/user/Marketing.vue')
         }
       ]
     },
