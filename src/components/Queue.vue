@@ -6,7 +6,7 @@
     </v-card>
   </div>
   <div v-else>
-    <v-card width="300px">
+    <v-card >
       <v-card-title primary-title>
         {{item.name}}
       </v-card-title>

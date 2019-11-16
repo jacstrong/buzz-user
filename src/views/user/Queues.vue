@@ -2,12 +2,18 @@
     <div>
         <div></div>
         <v-row class="d-flex ma-3" justify="start" align="start">
-            <div class="pa-2" width="300px">
-                <Queue queue-target="reservation" :loaded="reservationLoaded"></Queue>
-            </div>
-            <div class="pa-2" width="300px">
-                <Queue queue-target="walkin" :loaded="walkinLoaded"></Queue>
-            </div>
+            <v-container fluid ma-0 pa-0 fill-heigh>
+                <div class="d-flex flex-column-reverse">
+                    <v-row>
+                        <v-col>
+                            <Queue queue-target="reservation" :loaded="reservationLoaded"></Queue>
+                        </v-col>
+                        <v-col>
+                            <Queue queue-target="walkin" :loaded="walkinLoaded"></Queue>
+                        </v-col>
+                    </v-row>
+                </div>
+            </v-container>
         </v-row>
     </div>
 </template>
