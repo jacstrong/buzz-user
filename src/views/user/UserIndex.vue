@@ -11,7 +11,7 @@
     >
       <v-img
         class="drawer-bg"
-        src="https://source.unsplash.com/collection/8471113/300x1000"
+        src="https://source.unsplash.com/collection/8929999/300x1000"
         gradient="to top right, rgba(100,115,201,.33), rgba(25,32,72,.7)"
       >
         <!-- src="https://source.unsplash.com/collection/894/300x1000" -->
@@ -199,13 +199,6 @@ export default {
         link: { name: 'Marketing' },
         icon: mdiAccountSupervisorCircle
       },
-      {
-        name: 'Bridge',
-        link: { name: 'ManageUsers' },
-        icon: mdiBridge
-      }
-
-
     ],
     userMenu: false,
     fav: true,

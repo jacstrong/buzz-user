@@ -1,8 +1,8 @@
 <template>
 <div>
   <div v-if="!loaded">
-    <v-card width="300px" loading>
-      text
+    <v-card width="300px" loading class="medium pa-3">
+      Loading
     </v-card>
   </div>
   <div v-else>
@@ -18,7 +18,7 @@
         <v-flex
           v-for="(res, i) in item.queue"
           :key="res.phoneNumber"
-          :class="res.state === 'Waiting' ? 'person' : 'person red lighten-2'"
+          :class="res.state === 'Notified' ? 'person red lighten-2' : 'person'"
           width="100%"
           ma-1
           pa-1
@@ -34,11 +34,12 @@
               <div
                 v-if= "item.name === 'Reservation'"
               >
-                {{res.time}}
+
+                Time: {{res.time}}
               </div>
             </v-col>
             <v-col cols="3" class="justify-right">
-              <v-menu offset-y>
+              <!-- <v-menu offset-y>
                 <template v-slot:activator="{ on }">
                   <v-btn text small slot="activator" v-on="on">
                     <v-icon>more_vert</v-icon>
@@ -52,8 +53,13 @@
                     <v-list-item-title @click="remove(i)">Delete</v-list-item-title>
                   </v-list-item>
                 </v-list>
-              </v-menu>
-
+              </v-menu> -->
+              <v-btn icon text tile color="black lighten-2" @click="notify(i)">
+                <v-icon >notification_important</v-icon>
+              </v-btn>
+              <v-btn icon text tile color="warning" @click="remove(i)">
+                <v-icon>delete</v-icon>
+              </v-btn>
             </v-col>
           </v-row>
 
@@ -139,10 +145,19 @@ export default {
           .catch(err => {
             if (err.response) {
               this.setSnack('Something went wrong 1')
-              console.log('queue 137', err.response)
             }
           })
-        }
+      } else {
+        this.setReservationNotified(index)
+        this.$http.post('/api/reservations/notify', {id: this.reservationQueueID(index)})
+          .then(response => {
+            this.setSnack('Message Sent')
+            this.getReservation()
+          })
+          .catch(err => {
+            this.setSnack('Something went wrong')
+          })
+      }
     },
     remove (index) {
       if (this.queueTarget === 'walkin') {
@@ -158,14 +173,29 @@ export default {
             }
           })
         
-        }
+      } else {
+        this.$http.post('/api/reservations/remove', {id: this.reservationQueueID(index)})
+          .then(response => {
+            this.setSnack('Message Sent')
+            this.removeReservation(index)
+          })
+          .catch(err => {
+            this.setSnack('Something went wrong')
+          })
+      }
     },
+    ...mapActions({
+      getWalkin: 'getWalkin',
+      getReservation: 'getReservation'
+    }),
     ...mapMutations({
         addToWalkin: 'addToWalkin',
         setWalkin: 'setWalkin',
         setSnack: 'setSnack',
         changeWalkinStateToNotified: 'changeWalkinStateToNotified',
-        removeWalkin: 'removeWalkin'
+        removeWalkin: 'removeWalkin',
+        removeReservation: 'removeReservation',
+        setReservationNotified: 'setReservationNotified'
     })
   },
   computed: {
@@ -181,7 +211,8 @@ export default {
     ...mapGetters({
       reservation: 'reservation',
       walkin: 'walkin',
-      walkinQueueID: 'walkinQueueID'
+      walkinQueueID: 'walkinQueueID',
+      reservationQueueID: 'reservationQueueID'
     })
   }
 }

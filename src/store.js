@@ -74,6 +74,12 @@ export default new Vuex.Store({
     },
     removeWalkin (state, index) {
       state.walkin.queue.splice(index, 1)
+    },
+    removeReservation (state, index) {
+      state.reservation.queue.splice(index, 1)
+    },
+    setReservationNotified (state, index) {
+      state.reservation.queue[index].state = 'Notified'
     }
   },
   getters: {
@@ -90,13 +96,13 @@ export default new Vuex.Store({
       return state.walkin
     },
     walkinQueueID: (state) => (index) => {
-      console.log(index)
       return state.walkin.queue[index].contactID
     },
     reservationQueueID: (state) => (index) => {
       console.log(index)
-      return state.reservation.queue[index].contactID
-    }
+      return state.reservation.queue[index]._id
+    },
+    
   },
   actions: {
     checkCurrentUser: (context, callback) => {

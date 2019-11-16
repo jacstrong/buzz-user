@@ -74,7 +74,7 @@ export default {
           if (response.data.success === true) {
             console.log(response.data.user)
             this.setAuth(response.data.user)
-            this.nav({name: 'Dashboard'})
+            this.nav({name: 'Queues'})
           }
         })
         .catch((err) => {
