@@ -31,6 +31,11 @@
               <div class="text--primary">
                 #: {{ res.partyNum }}
               </div>
+              <div
+                v-if= "item.name === 'Reservation'"
+              >
+                {{res.time}}
+              </div>
             </v-col>
             <v-col cols="3" class="justify-right">
               <v-menu offset-y>
