@@ -38,7 +38,14 @@
                                 ></v-text-field>
                             </v-col>
                             <v-col cols="10" sm="4">
-                                <v-text-field label="Party Size *" type="number" outlined :rules="[v => !!v || 'Item is required']" required ></v-text-field>
+                                <v-text-field
+                                    v-model="partyNum"
+                                    label="Party Size *"
+                                    type="number"
+                                    outlined
+                                    :rules="[v => !!v || 'Item is required']"
+                                    required
+                                ></v-text-field>
                             </v-col>
                         </v-row>
                         <v-row>
@@ -138,9 +145,21 @@ export default {
         modal2: false,
         lazy: false,
         name: '',
-        phoneNumber: ''
+        phoneNumber: '',
+        partyNum: 0
     }),
     methods: {
+        clear () {
+            this.valid = true
+            this.time = null
+            this.date = null
+            this.modal1 = false
+            this.modal2 = false
+            this.lazy = false
+            this.name = ''
+            this.phoneNumber = ''
+            this.partyNum = 0
+        },
         save () {
             let data = {
                 name: this.name,
@@ -154,16 +173,22 @@ export default {
             this.$http.post('/api/reservations', data)
                 .then(response => {
                     console.log(response)
-
-                    this.setReservation(response.data)
+                    
+                    // this.setReservation(response.data)
                     this.dialog = false
-
+                    this.setSnack('Saved reservation')
+                    this.clear()
                 })
-                .catch()
+                .catch((err) => {
+                    this.setSnack('Error')
+                    this.dialog = false
+                    this.clear()
+                })
         },
         ...mapMutations({
             addToReservation: 'addToReservation',
-            setReservation: 'setReservation'
+            setReservation: 'setReservation',
+            setSnack: 'setSnack'
         })
     }
 }
