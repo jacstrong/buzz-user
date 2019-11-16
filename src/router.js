@@ -7,17 +7,26 @@ export default new Router({
   mode: 'history',
   base: process.env.BASE_URL,
   routes: [
+    // {
+    //   path:'/test',
+    //   component: () => import(/* webpackChunkName: "StoreIndex" */ './views/store/StoreIndex.vue'),
+    //   children: [
+    //     {
+    //       path: '/', name: 'Store Landing', component: () => import(/* webpackChunkName: "StoreLanding" */ './views/store/StoreIndex.vue')
+    //     }
+    //   ]
+    // },
     {
       path:'/',
-      component: () => import(/* webpackChunkName: "StoreIndex" */ './views/store/StoreIndex.vue'),
+      component: () => import(/* webpackChunkName: "StoreIndex" */ './views/user/UserIndex.vue'),
       children: [
         {
-          path: '/', name: 'Store Landing', component: () => import(/* webpackChunkName: "StoreLanding" */ './views/store/StoreIndex.vue')
+          path: '/', name: 'Queues', component: () => import(/* webpackChunkName: "StoreLanding" */ './views/user/Queues.vue')
         }
       ]
     },
     {
-      path: '/',
+      path: '/login',
       name: 'Login',
       component: () => import(/* webpackChunkName: "Login" */ './views/Login.vue')
     },
