@@ -60,6 +60,17 @@ export default new Vuex.Store({
     },
     setWalkin (state, queues) {
       state.walkin = queues
+    },
+    addToWalkin (state, contact) {
+      contact.timeStamp = new Date()
+      state.walkin.queue.push(contact)
+    },
+    changeWalkinStateToNotified(state, index) {
+      state.walkin.queue[index].state = "Notified"
+      state.walkin.queue[index].timeStamp = new Date()
+    },
+    removeWalkin (state, index) {
+      state.walkin.queue.splice(index, 1)
     }
   },
   getters: {
@@ -74,6 +85,10 @@ export default new Vuex.Store({
     },
     walkin: (state) => {
       return state.walkin
+    },
+    walkinQueueID: (state) => (index) => {
+      console.log(index)
+      return state.walkin.queue[index].contactID
     }
   },
   actions: {

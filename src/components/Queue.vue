@@ -10,11 +10,15 @@
       <v-card-title primary-title>
         {{item.name}}
       </v-card-title>
+      <v-card-actions>
+        <WalkIn block v-if="queueTarget === 'walkin'"></WalkIn>
+        <Reservation block v-if="queueTarget === 'reservation'"></Reservation>
+      </v-card-actions>
       <v-layout column>
         <v-flex
-          v-for="res in item.queue"
+          v-for="(res, i) in item.queue"
           :key="res.phoneNumber"
-          class="person"
+          :class="res.state === 'Waiting' ? 'person' : 'person red lighten-2'"
           width="100%"
           ma-1
           pa-1
@@ -25,22 +29,22 @@
             </v-col>
             <v-col cols="3">
               <div class="text--primary">
-                #: {{ res.partySize }}
+                #: {{ res.partyNum }}
               </div>
             </v-col>
             <v-col cols="3" class="justify-right">
               <v-menu offset-y>
                 <template v-slot:activator="{ on }">
-                  <v-btn rounded small slot="activator" v-on="on">
-                    <v-icon>home</v-icon>
+                  <v-btn text small slot="activator" v-on="on">
+                    <v-icon>more_vert</v-icon>
                   </v-btn>
                 </template>
                 <v-list>
                   <v-list-item>
-                    <v-list-item-title>Notify</v-list-item-title>
+                    <v-list-item-title @click="notify(i)">Notify</v-list-item-title>
                   </v-list-item>
                   <v-list-item>
-                    <v-list-item-title>Delete</v-list-item-title>
+                    <v-list-item-title @click="remove(i)">Delete</v-list-item-title>
                   </v-list-item>
                 </v-list>
               </v-menu>
@@ -72,12 +76,18 @@
 
 <script>
 import { mapMutations, mapGetters, mapActions } from 'vuex'
+import WalkIn from '../components/WalkIn.vue'
+import Reservation from '../components/Reservation.vue'
 
 export default {
   props: [
     'queueTarget',
     'loaded'
   ],
+  components: {
+    WalkIn,
+    Reservation
+  },
   data: () => ({
       
   }),
@@ -98,7 +108,60 @@ export default {
       {
         return "red";
       }
-    }
+    },
+    notify (index) {
+      if (this.queueTarget === 'walkin') {
+
+        this.changeWalkinStateToNotified(index)
+        let walkinData = {
+          queue: this.walkin
+        }
+        console.log('before', walkinData.queue)
+        this.$http.post('/api/queue/walkin', walkinData)
+          .then(response => {
+            // this.setWalkin(response.data)
+          })
+          .catch(err => {
+            if (err.response) {
+              console.log("queue 126", err.response)
+            }
+          })
+
+        this.$http.post('/api/notify/ready', {contactID: this.walkinQueueID(index)})
+          .then(response => {
+            this.setSnack('Message sent')
+          })
+          .catch(err => {
+            if (err.response) {
+              this.setSnack('Something went wrong 1')
+              console.log('queue 137', err.response)
+            }
+          })
+        }
+    },
+    remove (index) {
+      if (this.queueTarget === 'walkin') {
+        this.removeWalkin(index)
+        let walkinData = {
+          queue: this.walkin
+        }
+        this.$http.post('/api/queue/walkind', walkinData)
+          .then(response => {})
+          .catch(err => {
+            if (err.response) {
+              console.log('Queue 151', err)
+            }
+          })
+        
+        }
+    },
+    ...mapMutations({
+        addToWalkin: 'addToWalkin',
+        setWalkin: 'setWalkin',
+        setSnack: 'setSnack',
+        changeWalkinStateToNotified: 'changeWalkinStateToNotified',
+        removeWalkin: 'removeWalkin'
+    })
   },
   computed: {
     item () {
@@ -109,11 +172,11 @@ export default {
       } else {
         console.error('invalid component prop')
       }
-
     },
     ...mapGetters({
       reservation: 'reservation',
-      walkin: 'walkin'
+      walkin: 'walkin',
+      walkinQueueID: 'walkinQueueID'
     })
   }
 }

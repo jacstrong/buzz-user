@@ -17,12 +17,25 @@
                     <v-container>
                         <v-row>
                             <v-col cols="12" sm="12">
-                                <v-text-field label="Name *" outlined :rules="nameRules" required></v-text-field>
+                                <v-text-field 
+                                    v-model="name" 
+                                    label="Name *" 
+                                    outlined 
+                                    :rules="nameRules" 
+                                    required
+                                ></v-text-field>
                             </v-col>
                         </v-row>
                         <v-row>
                             <v-col cols="14" sm="8">
-                                <v-text-field v-mask="mask" label="Phone *"  outlined :rules="phoneRules" required ></v-text-field>
+                                <v-text-field 
+                                    v-model="phoneNumber" 
+                                    v-mask="mask" 
+                                    label="Phone *"  
+                                    outlined 
+                                    :rules="phoneRules" 
+                                    required 
+                                ></v-text-field>
                             </v-col>
                             <v-col cols="10" sm="4">
                                 <v-text-field label="Party Size *" type="number" outlined :rules="[v => !!v || 'Item is required']" required ></v-text-field>
@@ -93,7 +106,8 @@
                 </v-card-text>
                 <v-card-actions>
                     <v-spacer></v-spacer>
-                    <v-btn color="blue darken-1" text :disabled="!valid" @click="dialog = false">Save</v-btn>
+                    <v-btn color="warning" text @click="dialog = false">delete</v-btn>
+                    <v-btn color="blue darken-1" text :disabled="!valid" @click="save">Save</v-btn>
                 </v-card-actions>
             </v-card>
         </v-dialog>
@@ -101,28 +115,46 @@
 </template>
 
 <script>
-    import { mask } from 'vue-the-mask'
-    export default {
-        directives: {
-            mask
-        },
-        data: () => ({
-            valid: true,
-            dialog: false,
-            mask: '+1(###)###-####',
-            nameRules: [
-                v => !!v || 'Name is required'
-            ],
-            phoneRules: [
-                v => !!v || 'Valid Phone number is required'
-            ],
-            time: null,
-            date: null,
-            modal1: false,
-            modal2: false,
-            lazy: false
-        }),
+import { mask } from 'vue-the-mask'
+import { mapMutations, mapGetters, mapActions } from 'vuex'
+
+export default {
+    directives: {
+        mask
+    },
+    data: () => ({
+        valid: true,
+        dialog: false,
+        mask: '+1(###)###-####',
+        nameRules: [
+            v => !!v || 'Name is required'
+        ],
+        phoneRules: [
+            v => !!v || 'Valid Phone number is required'
+        ],
+        time: null,
+        date: null,
+        modal1: false,
+        modal2: false,
+        lazy: false,
+        name: '',
+        phoneNumber: ''
+    }),
+    methods: {
+        save () {
+            let data = {
+                name: this.name,
+                phoneNumber: this.phoneNumber
+            }
+            this.$http.post('/api/contact', data)
+                .then(response => {
+                    console.log(response)
+
+                })
+                .catch()
+        }
     }
+}
 
 </script>
 

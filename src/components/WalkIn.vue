@@ -17,15 +17,35 @@
                     <v-container>
                         <v-row>
                             <v-col cols="12" sm="12">
-                                <v-text-field label="Name *" outlined :rules="[v => !!v || 'Item is required']" required></v-text-field>
+                                <v-text-field 
+                                    v-model="name" 
+                                    label="Name *" 
+                                    outlined 
+                                    :rules="[v => !!v || 'Item is required']" 
+                                    required
+                                ></v-text-field>
                             </v-col>
                         </v-row>
                         <v-row>
                             <v-col cols="14" sm="8">
-                                <v-text-field v-mask="mask" label="Phone *"  outlined :rules="[v => !!v || 'Item is required']" required ></v-text-field>
+                                <v-text-field
+                                    v-model="phoneNumber"
+                                    v-mask="mask" 
+                                    label="Phone *"  
+                                    outlined 
+                                    :rules="[v => !!v || 'Item is required']" 
+                                    required 
+                                ></v-text-field>
                             </v-col>
                             <v-col cols="10" sm="4">
-                                <v-text-field label="Party Size *" type="number" outlined :rules="[v => !!v || 'Item is required']" required ></v-text-field>
+                                <v-text-field
+                                    v-model="partyNum"
+                                    label="Party Size *"
+                                    type="number"
+                                    outlined
+                                    :rules="[v => !!v || 'Item is required']"
+                                    required
+                                ></v-text-field>
                             </v-col>
                         </v-row>
                     </v-container>
@@ -33,7 +53,8 @@
                 </v-card-text>
                 <v-card-actions>
                     <v-spacer></v-spacer>
-                    <v-btn color="blue darken-1" text :disabled="!valid" @click="dialog = false">Save</v-btn>
+                    <v-btn color="warning" text @click="dialog = false">cancel</v-btn>
+                    <v-btn color="blue darken-1" text :disabled="!valid" @click="save">Save</v-btn>
                 </v-card-actions>
             </v-card>
         </v-dialog>
@@ -41,17 +62,44 @@
 </template>
 
 <script>
-    import { mask } from 'vue-the-mask'
-    export default {
-        directives: {
-            mask
+import { mask } from 'vue-the-mask'
+import { mapMutations, mapGetters, mapActions } from 'vuex'
+
+export default {
+    directives: {
+        mask
+    },
+    data: () => ({
+        valid: true,
+        dialog: false,
+        mask: '+1(###)###-####',
+        phoneNumber: '',
+        name: '',
+        partyNum: 0
+    }),
+    methods: {
+        save () {
+            let data = {
+                name: this.name,
+                phoneNumber: this.phoneNumber,
+                partyNum: this.partyNum,
+                state: 'waiting',
+                timestamp: new Date()
+            }
+            this.$http.post('/api/contact', data)
+                .then(response => {
+                    console.log(response)
+                    this.setWalkin(response.data)
+                    this.dialog = false
+                })
+                .catch()
         },
-        data: () => ({
-            valid: true,
-            dialog: false,
-            mask: '+1(###)###-####'
-        }),
+        ...mapMutations({
+            addToWalkin: 'addToWalkin',
+            setWalkin: 'setWalkin'
+        })
     }
+}
 
 </script>
 
